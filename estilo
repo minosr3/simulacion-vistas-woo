@@ -1,0 +1,52 @@
+/* Aviso “Personas viendo” */
+.people-viewing-notice {
+    display: flex;
+    align-items: center;
+    background: #EAF8F3;           /* fondo mint green */
+    color: #21825B;                /* texto teal oscuro */
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s;
+}
+.people-viewing-notice:hover {
+    background: #D8EEEA;           /* un tono ligeramente más intenso */
+}
+
+/* Icono con animación “pulse” */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.2); }
+}
+.viewing-icon {
+    font-size: 18px;
+    margin-right: 8px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Aviso “Ventas falsas” */
+.sales-notice {
+    display: flex;
+    align-items: center;
+    background: #FEECE2;           /* fondo melocotón claro */
+    color: #D9534F;                /* texto rojo fuerte */
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s;
+}
+.sales-notice:hover {
+    background: #FBD5C5;           /* un tono ligeramente más intenso */
+}
+
+/* Icono de ventas */
+.sales-icon {
+    font-size: 18px;
+    margin-right: 8px;
+}
