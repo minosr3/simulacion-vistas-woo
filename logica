@@ -1,0 +1,58 @@
+// Shortcode: personas viendo producto (singular/plural, con espacio antes de <em>)
+function people_viewing_product_shortcode() {
+    $views = mt_rand(1, 20);
+
+    if ( $views === 1 ) {
+        $texto = sprintf(
+            /* translators: %d = número de personas */
+            _x( '¡%d persona está viendo este producto ahora mismo!', 'viewing singular', 'your-text-domain' ),
+            $views
+        );
+    } else {
+        $texto = sprintf(
+            /* translators: %d = número de personas */
+            _x( '¡%d personas están viendo este producto ahora mismo!', 'viewing plural', 'your-text-domain' ),
+            $views
+        );
+    }
+
+    return '<div class="people-viewing-notice">'
+         . '<span class="viewing-icon">🔎</span> '
+         . $texto
+         . '</div>';
+}
+add_shortcode( 'people_viewing_product', 'people_viewing_product_shortcode' );
+
+// Shortcode: ventas falsas (singular/plural)
+function fake_sales_product_shortcode() {
+    $sales = mt_rand(1, 30);
+
+    if ( $sales === 1 ) {
+        $texto = sprintf(
+            /* translators: %d = número de artículos */
+            _x( '¡%d artículo vendido en las últimas 5 horas!', 'sales singular', 'your-text-domain' ),
+            $sales
+        );
+    } else {
+        $texto = sprintf(
+            /* translators: %d = número de artículos */
+            _x( '¡%d artículos vendidos en las últimas 5 horas!', 'sales plural', 'your-text-domain' ),
+            $sales
+        );
+    }
+
+    return '<div class="sales-notice">'
+         . '<span class="sales-icon">🔥</span> '
+         . $texto
+         . '</div>';
+}
+add_shortcode( 'fake_sales_product', 'fake_sales_product_shortcode' );
+
+// Inyectar ambas notificaciones después del formulario de "Añadir al carrito"
+function insert_product_notices() {
+    if ( is_product() ) {
+        echo do_shortcode( '[fake_sales_product]' );
+        echo do_shortcode( '[people_viewing_product]' );
+    }
+}
+add_action( 'woocommerce_after_add_to_cart_form', 'insert_product_notices', 10 );
