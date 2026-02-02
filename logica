@@ -1,58 +1,111 @@
-// Shortcode: personas viendo producto (singular/plural, con espacio antes de <em>)
-function people_viewing_product_shortcode() {
-    $views = mt_rand(1, 20);
+/**
+ * Plugin Name: Woo Fake Activity Notices
+ * Description: Muestra personas viendo el producto y ventas recientes con persistencia por producto.
+ * Version: 1.1.1
+ * Author: Minosr3
 
+/**
+ * Shortcode: Personas viendo el producto (con persistencia)
+ */
+function people_viewing_product_shortcode() {
+
+    if ( ! is_product() ) {
+        return '';
+    }
+
+    global $product;
+    if ( ! $product ) {
+        return '';
+    }
+
+    $product_id = $product->get_id();
+    $transient_key = 'people_viewing_product_' . $product_id;
+
+    // Obtener valor persistente
+    $views = get_transient( $transient_key );
+
+    // Si no existe, generar uno nuevo
+    if ( $views === false ) {
+        $views = mt_rand(3, 18); // rango realista
+        set_transient( $transient_key, $views, 10 * MINUTE_IN_SECONDS );
+    }
+
+    // Texto singular / plural
     if ( $views === 1 ) {
-        $texto = sprintf(
-            /* translators: %d = número de personas */
+        $text = sprintf(
             _x( '¡%d persona está viendo este producto ahora mismo!', 'viewing singular', 'your-text-domain' ),
             $views
         );
     } else {
-        $texto = sprintf(
-            /* translators: %d = número de personas */
+        $text = sprintf(
             _x( '¡%d personas están viendo este producto ahora mismo!', 'viewing plural', 'your-text-domain' ),
             $views
         );
     }
 
-    return '<div class="people-viewing-notice">'
-         . '<span class="viewing-icon">🔎</span> '
-         . $texto
-         . '</div>';
+    return '<div class="people-viewing-notice">
+                <span class="viewing-icon">🔎</span> ' . esc_html( $text ) . '
+            </div>';
 }
 add_shortcode( 'people_viewing_product', 'people_viewing_product_shortcode' );
 
-// Shortcode: ventas falsas (singular/plural)
-function fake_sales_product_shortcode() {
-    $sales = mt_rand(1, 30);
 
+/**
+ * Shortcode: Ventas recientes (con persistencia)
+ */
+function fake_sales_product_shortcode() {
+
+    if ( ! is_product() ) {
+        return '';
+    }
+
+    global $product;
+    if ( ! $product ) {
+        return '';
+    }
+
+    $product_id = $product->get_id();
+    $transient_key = 'fake_sales_product_' . $product_id;
+
+    // Obtener valor persistente
+    $sales = get_transient( $transient_key );
+
+    // Si no existe, generar uno nuevo
+    if ( $sales === false ) {
+        $sales = mt_rand(2, 25); // rango realista
+        set_transient( $transient_key, $sales, 30 * MINUTE_IN_SECONDS );
+    }
+
+    // Texto singular / plural
     if ( $sales === 1 ) {
-        $texto = sprintf(
-            /* translators: %d = número de artículos */
+        $text = sprintf(
             _x( '¡%d artículo vendido en las últimas 5 horas!', 'sales singular', 'your-text-domain' ),
             $sales
         );
     } else {
-        $texto = sprintf(
-            /* translators: %d = número de artículos */
+        $text = sprintf(
             _x( '¡%d artículos vendidos en las últimas 5 horas!', 'sales plural', 'your-text-domain' ),
             $sales
         );
     }
 
-    return '<div class="sales-notice">'
-         . '<span class="sales-icon">🔥</span> '
-         . $texto
-         . '</div>';
+    return '<div class="sales-notice">
+                <span class="sales-icon">🔥</span> ' . esc_html( $text ) . '
+            </div>';
 }
 add_shortcode( 'fake_sales_product', 'fake_sales_product_shortcode' );
 
-// Inyectar ambas notificaciones después del formulario de "Añadir al carrito"
-function insert_product_notices() {
-    if ( is_product() ) {
-        echo do_shortcode( '[fake_sales_product]' );
-        echo do_shortcode( '[people_viewing_product]' );
+
+/**
+ * Insertar notificaciones debajo del botón "Añadir al carrito"
+ */
+function insert_product_notices_after_cart() {
+
+    if ( ! is_product() ) {
+        return;
     }
+
+    echo do_shortcode( '[fake_sales_product]' );
+    echo do_shortcode( '[people_viewing_product]' );
 }
-add_action( 'woocommerce_after_add_to_cart_form', 'insert_product_notices', 10 );
+add_action( 'woocommerce_after_add_to_cart_form', 'insert_product_notices_after_cart', 10 );
